@@ -15,7 +15,7 @@ gcloud compute networks delete default --quiet || true
 gcloud compute networks create shiny --subnet-mode=custom
 gcloud compute networks subnets create shiny-us-central1 --network shiny --range 10.100.0.0/20 --region us-central1
 gcloud compute firewall-rules create allow-remote --network shiny --allow tcp:22,tcp:3389,icmp
-gcloud compute instances create shiny --subnet shiny-us-central1 --zone=us-central1-a --no-address
+gcloud compute instances create shiny --subnet shiny-us-central1 --zone=us-central1-a --no-address --machine-type f1-micro
 
 # Some buckets
 gsutil mb gs://${SOURCE_PROJECT}-gcloud-declarative-1

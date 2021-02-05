@@ -29,8 +29,3 @@ spec:
  credentialSecretName: gcloud-declarative-kcc
 EOF
 kubectl apply -f configconnector.yaml
-
-# Set up a namespace for the destination project
-kubectl create namespace ${DEST_PROJECT}
-kubectl config set-context --current --namespace ${DEST_PROJECT}
-kubectl annotate namespace ${DEST_PROJECT} cnrm.cloud.google.com/project-id=${DEST_PROJECT}

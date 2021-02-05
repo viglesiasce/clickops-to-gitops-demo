@@ -1,10 +1,17 @@
 # gcloud Declarative Demo
 
+1. Set some variables that will be reused throughout the tutorial:
+
+```shell
+export SOURCE_PROJECT=vic-gcloud-export-source-8
+export DEST_PROJECT=vic-gcloud-destination-8
+export PROJECT_CREATION_ARGS='--folder=301779790514'
+```
+
 1. Create source project and resources
 
 ```shell
-export SOURCE_PROJECT=vic-gcloud-export-source-7
-gcloud projects create --folder=301779790514 ${SOURCE_PROJECT}
+gcloud projects create ${PROJECT_CREATION_ARGS} ${SOURCE_PROJECT}
 gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${SOURCE_PROJECT}
 gcloud config set project ${SOURCE_PROJECT}
 gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis.com
@@ -14,8 +21,7 @@ gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis
 1. Create destination project.
 
 ```shell
-export DEST_PROJECT=vic-gcloud-declarative-18
-gcloud projects create --folder=301779790514 ${DEST_PROJECT}
+gcloud projects create ${PROJECT_CREATION_ARGS} ${DEST_PROJECT}
 gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${DEST_PROJECT}
 gcloud config set project ${DEST_PROJECT}
 gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com iam.googleapis.com sourcerepo.googleapis.com
@@ -31,9 +37,9 @@ gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis
 
 ```shell
 mkdir -p kcc-demo/infra
-rm -rf kcc-demo/infra*
+rm -rf kcc-demo/infra/*
 # Install the Kubernetes config-connector binary
-sudo apt-get install -y google-cloud-sdk-config-connector
+echo y | sudo apt-get install -y google-cloud-sdk-config-connector
 gcloud alpha asset bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT}
 ```
 
@@ -52,8 +58,8 @@ cd kcc-demo
 kpt pkg init .
 kpt live init .
 # Copy in the kpt declarative funciton
-sed s/DEST_PROJECT/${DEST_PROJECT}/g ../fn/sanitize.yaml > sanitize.yaml
-sed -i s/SOURCE_PROJECT/${SOURCE_PROJECT}/g sanitize.yaml
+sed s/DEST_PROJECT/${DEST_PROJECT}/g ../fn/sanitize.yaml > infra/sanitize.yaml
+sed -i s/SOURCE_PROJECT/${SOURCE_PROJECT}/g infra/sanitize.yaml
 cd ..
 ```
 
@@ -89,7 +95,12 @@ ssh-keygen -t rsa -f config-sync
 
 1. Add your SSH public key by visiting the SSH key page:
 
-    https://source.cloud.google.com/user/ssh_keys
+    ```shell
+    cat config-sync.pub
+    ```
+
+    Visit:  
+    https://source.cloud.google.com/user/ssh_keys?register=true
 
 1. Push your config to the repo
 
@@ -100,32 +111,14 @@ git checkout -b main
 git add .
 git commit -m "Initial commit"
 git remote add origin https://source.developers.google.com/p/${DEST_PROJECT}/r/kcc-demo
-git push origin main
+git push --set-upstream origin main
 cd ..
 ```
 
 1. Install and configure Config Sync
 
 ```shell
-gsutil cp gs://config-management-release/released/latest/config-sync-operator.yaml config-sync-operator.yaml
-kubectl apply -f config-sync-operator.yaml
-kubectl create secret generic git-creds  --namespace=config-management-system  --from-file=ssh=config-syncsecret/git-creds created
-cat > config-sync.yaml <<EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  # clusterName is required and must be unique among all managed clusters
-  clusterName: kcc-minikube
-  sourceFormat: unstructured
-  git:
-    syncRepo: https://source.developers.google.com/p/${DEST_PROJECT}/r/kcc-demo
-    syncBranch: main
-    secretType: gcenode
-    policyDir: infra
-EOF
-kubectl apply -f config-sync.yaml
+./install-config-sync.sh
 ```
 
 ## Cleanup
