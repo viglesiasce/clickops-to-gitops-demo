@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sanitize-bulk-export
+  annotations:
+    config.kubernetes.io/function: |
+      exec:
+        path: ./sanitize-bulk-export
+data:
+  oldProject: SOURCE_PROJECT
+  newProject: DEST_PROJECT
