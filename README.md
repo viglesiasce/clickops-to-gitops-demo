@@ -95,12 +95,12 @@ ssh-keygen -t rsa -f config-sync
 
 1. Add your SSH public key by visiting the SSH key page:
 
-    ```shell
-    cat config-sync.pub
-    ```
+```shell
+cat config-sync.pub
+```
 
-    Visit:  
-    https://source.cloud.google.com/user/ssh_keys?register=true
+Visit:  
+https://source.cloud.google.com/user/ssh_keys?register=true
 
 1. Push your config to the repo
 
@@ -118,7 +118,7 @@ cd ..
 1. Install and configure Config Sync
 
 ```shell
-./install-config-sync.sh
+./config-sync-up.sh
 ```
 
 ## Cleanup
