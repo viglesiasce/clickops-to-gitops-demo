@@ -2,7 +2,7 @@
 
 gsutil cp gs://config-management-release/released/latest/config-sync-operator.yaml config-sync-operator.yaml
 kubectl apply -f config-sync-operator.yaml
-kubectl create secret generic git-creds  --namespace=config-management-system  --from-file=ssh=config-syncsecret/git-creds created
+kubectl create secret generic git-creds  --namespace=config-management-system  --from-file=ssh=config-sync
 cat > config-sync.yaml <<EOF
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
