@@ -2,7 +2,7 @@
 
 1. Set some variables that will be reused throughout the tutorial:
 
-```shell
+```sh
 export SOURCE_PROJECT=vic-gcloud-export-source-8
 export DEST_PROJECT=vic-gcloud-destination-8
 export PROJECT_CREATION_ARGS='--folder=301779790514'
@@ -10,7 +10,7 @@ export PROJECT_CREATION_ARGS='--folder=301779790514'
 
 1. Create source project and resources
 
-```shell
+```sh
 gcloud projects create ${PROJECT_CREATION_ARGS} ${SOURCE_PROJECT}
 gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${SOURCE_PROJECT}
 gcloud config set project ${SOURCE_PROJECT}
@@ -20,7 +20,7 @@ gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis
 
 1. Create destination project.
 
-```shell
+```sh
 gcloud projects create ${PROJECT_CREATION_ARGS} ${DEST_PROJECT}
 gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${DEST_PROJECT}
 gcloud config set project ${DEST_PROJECT}
@@ -29,13 +29,13 @@ gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis
 
 1. Install the Kubernetes Config Connector in Minikube
 
-```shell
+```sh
 ./kcc-up.sh
 ```
 
 1. Export the resources to KRM format
 
-```shell
+```sh
 mkdir -p kcc-demo/infra
 rm -rf kcc-demo/infra/*
 # Install the Kubernetes config-connector binary
@@ -45,7 +45,7 @@ gcloud alpha asset bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT
 
 1. Compile the santization function
 
-```shell
+```sh
 cd fn/sanitize-bulk-export/
 go build -o ../../sanitize-bulk-export
 cd ../..
@@ -53,7 +53,7 @@ cd ../..
 
 1. Initialize the kpt package
 
-```shell
+```sh
 cd kcc-demo
 kpt pkg init .
 kpt live init .
@@ -65,19 +65,19 @@ cd ..
 
 1. Inspect the configuration with --dry-run
 
-```shell
+```sh
 kpt fn run kcc-demo/infra --enable-exec --dry-run
 ```
 
 1. Ensure KCC is up and running
 
-```shell
+```sh
 kubectl wait -n cnrm-system --for=condition=Ready pod --all
 ```
 
 1. Apply the config
 
-```shell
+```sh
 kpt fn run kcc-demo/infra --enable-exec
 # Workaround project issue b/178745928
 rm kcc-demo/infra/project_*.yaml
@@ -88,23 +88,22 @@ rm kcc-demo/infra/iam*.yaml
 
 1. Create the git repo in Cloud Source Repositories
 
-```shell
+```sh
 gcloud source repos create kcc-demo
 ssh-keygen -t rsa -f config-sync
 ```
 
 1. Add your SSH public key by visiting the SSH key page:
 
-```shell
+```sh
 cat config-sync.pub
 ```
 
-Visit:  
-https://source.cloud.google.com/user/ssh_keys?register=true
+Visit the [Register SSH Key](https://source.cloud.google.com/user/ssh_keys?register=true).
 
 1. Push your config to the repo
 
-```shell
+```sh
 cd kcc-demo
 git init .
 git checkout -b main
@@ -117,13 +116,13 @@ cd ..
 
 1. Install and configure Config Sync
 
-```shell
+```sh
 ./config-sync-up.sh
 ```
 
 ## Cleanup
 
-```shell
+```sh
 minikube delete --profile kcc
 gcloud projects delete ${DEST_PROJECT}
 gcloud projects delete ${SOURCE_PROJECT}
