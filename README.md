@@ -42,7 +42,7 @@ mkdir -p kcc-demo/infra
 rm -rf kcc-demo/infra/*
 # Install the Kubernetes config-connector binary
 echo y | sudo apt-get install -y google-cloud-sdk-config-connector
-gcloud alpha asset bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT}
+gcloud alpha resource-config bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT}
 ```
 
 1. Compile the santization function
