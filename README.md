@@ -42,7 +42,9 @@ mkdir -p kcc-demo/infra
 rm -rf kcc-demo/infra/*
 # Install the Kubernetes config-connector binary
 echo y | sudo apt-get install -y google-cloud-sdk-config-connector
-gcloud alpha resource-config bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT}
+gcloud alpha resource-config bulk-export --path kcc-demo/infra/ --project ${SOURCE_PROJECT} \
+        --resource-types compute.googleapis.com/Instance,compute.googleapis.com/Network,compute.googleapis.com/Subnetwork,storage.googleapis.com/Bucket,compute.googleapis.com/Firewall,serviceusage.googleapis.com/Service
+
 ```
 
 1. Compile the santization function
@@ -81,9 +83,6 @@ kubectl wait -n cnrm-system --for=condition=Ready pod --all
 
 ```sh
 kpt fn run kcc-demo/infra --enable-exec
-# Workaround project issue b/178745928
-rm kcc-demo/infra/project_*.yaml
-rm kcc-demo/infra/iam*.yaml
 ```
 
 ## Setting up GitOps
