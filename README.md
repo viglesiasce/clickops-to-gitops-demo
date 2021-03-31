@@ -8,13 +8,14 @@
 export SOURCE_PROJECT=vic-gcloud-export-source-8
 export DEST_PROJECT=vic-gcloud-destination-8
 export PROJECT_CREATION_ARGS='--folder=301779790514'
+export BILLING_ACCOUNT=005196-7B06D5-7D3824
 ```
 
 1. Create source project and resources
 
 ```sh
 gcloud projects create ${PROJECT_CREATION_ARGS} ${SOURCE_PROJECT}
-gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${SOURCE_PROJECT}
+gcloud beta billing projects link --billing-account=${BILLING_ACCOUNT} ${SOURCE_PROJECT}
 gcloud config set project ${SOURCE_PROJECT}
 gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis.com
 ./create-resources.sh
@@ -24,7 +25,7 @@ gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis
 
 ```sh
 gcloud projects create ${PROJECT_CREATION_ARGS} ${DEST_PROJECT}
-gcloud beta billing projects link --billing-account=005196-7B06D5-7D3824 ${DEST_PROJECT}
+gcloud beta billing projects link --billing-account=${BILLING_ACCOUNT} ${DEST_PROJECT}
 gcloud config set project ${DEST_PROJECT}
 gcloud services enable cloudasset.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com iam.googleapis.com sourcerepo.googleapis.com
 ```
